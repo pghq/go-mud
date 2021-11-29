@@ -336,8 +336,8 @@ github.com/ory/dockertest v3.3.5+incompatible/go.mod h1:1vX4m9wsvi00u5bseYwXaSnh
 github.com/pborman/getopt v0.0.0-20180729010549-6fdd0a2c7117/go.mod h1:85jBQOZwpVEaDAr341tbn15RS4fCAsIst0qp7i8ex1o=
 github.com/pelletier/go-toml v1.2.0/go.mod h1:5z9KED0ma1S8pY6P1sdut58dfprrGBbd/94hg7ilaic=
 github.com/peterbourgon/diskv v2.0.1+incompatible/go.mod h1:uqqh8zWWbv1HBMNONnaR/tNboyR3/BZd58JJSHlUSCU=
-github.com/pghq/go-red v0.0.9 h1:YlQd8RVJCnvyLKqNBzrMC77BAcHEJRZ39kdJC3s/Mek=
-github.com/pghq/go-red v0.0.9/go.mod h1:07psiUBGLGk+ifumXVTFPMGNpsYBObRrkq85f/hyrHA=
+github.com/pghq/go-red v0.0.10 h1:zk0NsnL7AocgG4YLHJ5hANlhLPG0ImKIW34LNDC9HRY=
+github.com/pghq/go-red v0.0.10/go.mod h1:07psiUBGLGk+ifumXVTFPMGNpsYBObRrkq85f/hyrHA=
 github.com/pghq/go-tea v0.0.29 h1:vz4VeLzfO4MdcqTS2viahSLiTborUUYEYd/qV+GSpzk=
 github.com/pghq/go-tea v0.0.29/go.mod h1:Md3yoEAgn1ULDv7cVRLTOcn1YWnlYRuKCQnvvLEFscE=
 github.com/pingcap/errors v0.11.4 h1:lFuQV/oaUMGcD2tqt+01ROSmJs75VG1ToEOkZIZ4nE4=

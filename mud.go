@@ -18,25 +18,22 @@ import (
 	"github.com/pghq/go-mud/store"
 )
 
-// Client allows interaction with services within the domain.
-type Client struct {
-	common service
+// Classifier is an instance of the KNN classifier.
+type Classifier service
 
-	Trends *TrendService
-}
-
-// NewClient creates a new client instance.
-func NewClient() *Client {
-	c := Client{
-		common: service{
-			store: store.New(),
-			graph: graph.New(),
-		},
+// NewClassifier creates a new client instance.
+func NewClassifier() *Classifier {
+	c := Classifier{
+		store: store.New(),
+		graph: graph.New(),
 	}
 
-	c.Trends = (*TrendService)(&c.common)
-
 	return &c
+}
+
+// Wait for graph to be ready
+func (c *Classifier) Wait() {
+	c.graph.Wait()
 }
 
 // service is a shared configuration for all services within the domain.

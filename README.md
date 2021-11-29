@@ -1,5 +1,5 @@
 # go-mud
-Golang trend forecasting library.
+Golang supervised classification library.
 
 ## Installation
 
@@ -17,13 +17,8 @@ import "github.com/pghq/go-mud"
 To create a new client:
 
 ```
-client, err := mud.NewClient()
-if err != nil{
-    panic(err)
-}
-
-err := client.Trends.Insert("foo", "bar", []float64{0.5, 0.1})
-if err != nil{
+cls := mud.NewClassifier()
+if err := cls.Insert("foo", "bar", []float64{0.5, 0.1}); err != nil{
     panic(err)
 }
 ```
