@@ -62,6 +62,8 @@ func (g *Graph) Search(data []float64, opts ...SearchOption) ([]int, error) {
 		return nil, tea.NewNoContent()
 	}
 
+	g.mutex.RLock()
+	defer g.mutex.RUnlock()
 	dst := make([]float64, g.size)
 	copy(dst, data)
 
