@@ -14,8 +14,9 @@
 package mud
 
 import (
+	"github.com/pghq/go-ark"
+
 	"github.com/pghq/go-mud/graph"
-	"github.com/pghq/go-mud/store"
 )
 
 // Classifier is an instance of the KNN classifier.
@@ -24,7 +25,7 @@ type Classifier service
 // NewClassifier creates a new client instance.
 func NewClassifier() *Classifier {
 	c := Classifier{
-		store: store.New(),
+		store: ark.NewInMemory(),
 		graph: graph.New(),
 	}
 
@@ -39,5 +40,5 @@ func (c *Classifier) Wait() {
 // service is a shared configuration for all services within the domain.
 type service struct {
 	graph *graph.Graph
-	store *store.Store
+	store *ark.InMemoryStore
 }
