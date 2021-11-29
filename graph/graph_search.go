@@ -16,8 +16,8 @@ const (
 
 // SearchJob builds the kd tree if changes are present
 func (g *Graph) SearchJob(ctx context.Context) {
-	g.mutex.RLock()
-	defer g.mutex.RUnlock()
+	g.mutex.Lock()
+	defer g.mutex.Unlock()
 	select {
 	case <-ctx.Done():
 		return
