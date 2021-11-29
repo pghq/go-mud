@@ -1,17 +1,17 @@
 package mud
 
 import (
+	"github.com/pghq/go-ark"
 	"github.com/pghq/go-tea"
 
 	"github.com/pghq/go-mud/graph"
-	"github.com/pghq/go-mud/store"
 )
 
 // Cursor for search results
 type Cursor struct {
 	row   int
 	ids   []int
-	store *store.Store
+	store *ark.InMemoryStore
 }
 
 // Next advances the iterator
@@ -31,7 +31,7 @@ func (c *Cursor) Decode(v interface{}) error {
 }
 
 // NewCursor creates a new forecast instance
-func NewCursor(ids []int, store *store.Store) *Cursor {
+func NewCursor(ids []int, store *ark.InMemoryStore) *Cursor {
 	return &Cursor{
 		row:   -1,
 		ids:   ids,
