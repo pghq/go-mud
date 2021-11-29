@@ -40,11 +40,11 @@ func NewCursor(ids []int, store *store.Store) *Cursor {
 }
 
 // Search for the KNN to point
-func (s *TrendService) Search(data []float64, opts ...graph.SearchOption) (*Cursor, error) {
-	ids, err := s.graph.Search(data, opts...)
+func (c *Classifier) Search(data []float64, opts ...graph.SearchOption) (*Cursor, error) {
+	ids, err := c.graph.Search(data, opts...)
 	if err != nil {
 		return nil, tea.Error(err)
 	}
 
-	return NewCursor(ids, s.store), nil
+	return NewCursor(ids, c.store), nil
 }

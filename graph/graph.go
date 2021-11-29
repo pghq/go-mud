@@ -33,7 +33,7 @@ func New() *Graph {
 		pending: make(chan *Point, 1000),
 		wait:    make(chan *sync.WaitGroup),
 	}
-	g.worker = red.NewWorker(g.PlotJob, g.SearchJob)
+	g.worker = red.NewWorker(g.PlotJob, g.SearchJob).Quiet()
 	go g.worker.Start()
 	return &g
 }

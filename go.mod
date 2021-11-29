@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/dgraph-io/badger/v3 v3.2103.2
-	github.com/pghq/go-red v0.0.9
+	github.com/pghq/go-red v0.0.10
 	github.com/pghq/go-tea v0.0.29
 	github.com/sjwhitworth/golearn v0.0.0-20211014193759-a8b69c276cd8
 	github.com/stretchr/testify v1.7.0
