@@ -10,35 +10,84 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package mud provides a client for ML recommendations.
 package mud
 
 import (
-	"github.com/pghq/go-ark"
+	"context"
+	"reflect"
+	"time"
 
-	"github.com/pghq/go-mud/graph"
+	"github.com/pghq/go-ark"
+	"github.com/pghq/go-tea"
+
+	"github.com/pghq/go-mud/frequency"
+	"github.com/pghq/go-mud/internal"
+	"github.com/pghq/go-mud/neighbor"
 )
 
-// Classifier is an instance of the KNN classifier.
-type Classifier service
+const (
+	// QueryCacheTTL is the TTL for queries
+	QueryCacheTTL = 100 * time.Millisecond
+)
 
-// NewClassifier creates a new client instance.
-func NewClassifier() *Classifier {
-	c := Classifier{
-		store: ark.NewInMemory(),
-		graph: graph.New(),
+// Graph classification service.
+type Graph struct {
+	neighbors   *neighbor.Tree
+	frequencies *frequency.Map
+	conn        *ark.KVSConn
+}
+
+// NewGraph creates a new graph.
+func NewGraph() *Graph {
+	dm := ark.Open()
+	conn, _ := dm.ConnectKVS(context.Background(), "inmem")
+
+	g := Graph{
+		conn:        conn,
+		neighbors:   neighbor.NewTree(),
+		frequencies: frequency.NewMap(),
 	}
 
-	return &c
+	return &g
 }
 
-// Wait for graph to be ready
-func (c *Classifier) Wait() {
-	c.graph.Wait()
+// Wait for plots be processed.
+func (g *Graph) Wait() {
+	g.neighbors.Wait()
 }
 
-// service is a shared configuration for all services within the domain.
-type service struct {
-	graph *graph.Graph
-	store *ark.InMemoryStore
+// view keys by algorithm
+func (g *Graph) view(key []byte, v interface{}, q internal.Query, fn func(q internal.Query) ([][]byte, error)) error {
+	return g.conn.Do(context.Background(), func(tx *ark.KVSTxn) error {
+		rv := reflect.ValueOf(v)
+		if rv.Kind() != reflect.Ptr || rv.IsNil() || !rv.IsValid() {
+			return tea.NewError("dst must be a pointer")
+		}
+
+		rv = rv.Elem()
+		if rv.Kind() != reflect.Slice {
+			return tea.NewError("dst must be a pointer to slice")
+		}
+
+		var keys [][]byte
+		if _, err := tx.Get(key, &keys).Resolve(); err != nil {
+			keys, err = fn(q)
+			if err != nil {
+				return tea.Error(err)
+			}
+			tx.InsertWithTTL(key, keys, QueryCacheTTL)
+		}
+
+		var values []reflect.Value
+		for _, key := range keys {
+			item := reflect.New(reflect.TypeOf(v).Elem().Elem())
+			if _, err := tx.Get(key, &item).Resolve(); err != nil {
+				return tea.Error(err)
+			}
+			values = append(values, item.Elem())
+		}
+
+		rv.Set(reflect.Append(rv, values...))
+		return nil
+	})
 }
