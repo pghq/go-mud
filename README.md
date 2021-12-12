@@ -17,7 +17,7 @@ import "github.com/pghq/go-mud"
 To create a new graph:
 
 ```
-g := mud.NewGraph()
+g := mud.New()
 if err := g.Plot([]byte("foo"), "bar", []float64{0.5, 0.1}); err != nil{
     panic(err)
 }
