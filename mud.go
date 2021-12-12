@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/pghq/go-ark"
+	"github.com/pghq/go-ark/db"
 	"github.com/pghq/go-tea"
 
 	"github.com/pghq/go-mud/frequency"
@@ -34,18 +35,19 @@ const (
 type Graph struct {
 	neighbors   *neighbor.Tree
 	frequencies *frequency.Map
-	conn        *ark.KVSConn
+	mapper      *ark.Mapper
 }
 
-// NewGraph creates a new graph.
-func NewGraph() *Graph {
-	dm := ark.Open()
-	conn, _ := dm.ConnectKVS(context.Background(), "inmem")
-
+// New creates a new graph.
+func New(opts ...GraphOption) *Graph {
 	g := Graph{
-		conn:        conn,
+		mapper:      ark.New(),
 		neighbors:   neighbor.NewTree(),
 		frequencies: frequency.NewMap(),
+	}
+
+	for _, opt := range opts {
+		opt(&g)
 	}
 
 	return &g
@@ -58,7 +60,7 @@ func (g *Graph) Wait() {
 
 // view keys by algorithm
 func (g *Graph) view(key []byte, v interface{}, q internal.Query, fn func(q internal.Query) ([][]byte, error)) error {
-	return g.conn.Do(context.Background(), func(tx *ark.KVSTxn) error {
+	return g.mapper.Do(context.Background(), func(tx db.Txn) error {
 		rv := reflect.ValueOf(v)
 		if rv.Kind() != reflect.Ptr || rv.IsNil() || !rv.IsValid() {
 			return tea.NewError("dst must be a pointer")
@@ -70,18 +72,18 @@ func (g *Graph) view(key []byte, v interface{}, q internal.Query, fn func(q inte
 		}
 
 		var keys [][]byte
-		if _, err := tx.Get(key, &keys).Resolve(); err != nil {
+		if err := tx.Get("", string(key), &keys); err != nil {
 			keys, err = fn(q)
 			if err != nil {
 				return tea.Error(err)
 			}
-			tx.InsertWithTTL(key, keys, QueryCacheTTL)
+			_ = tx.Insert("", string(key), keys, db.TTL(QueryCacheTTL))
 		}
 
 		var values []reflect.Value
 		for _, key := range keys {
 			item := reflect.New(reflect.TypeOf(v).Elem().Elem())
-			if _, err := tx.Get(key, &item).Resolve(); err != nil {
+			if err := tx.Get("", string(key), &item); err != nil {
 				return tea.Error(err)
 			}
 			values = append(values, item.Elem())
@@ -89,5 +91,15 @@ func (g *Graph) view(key []byte, v interface{}, q internal.Query, fn func(q inte
 
 		rv.Set(reflect.Append(rv, values...))
 		return nil
-	})
+	}, db.BatchReadSize(2))
+}
+
+// GraphOption to configure custom graph
+type GraphOption func(g *Graph)
+
+// Mapper sets a custom data mapper
+func Mapper(o *ark.Mapper) GraphOption {
+	return func(g *Graph) {
+		g.mapper = o
+	}
 }

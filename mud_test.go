@@ -3,13 +3,14 @@ package mud
 import (
 	"testing"
 
+	"github.com/pghq/go-ark"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGraph_Plot(t *testing.T) {
 	t.Parallel()
 
-	g := NewGraph()
+	g := New(Mapper(ark.New()))
 
 	t.Run("bad request", func(t *testing.T) {
 		err := g.Plot(nil, nil, nil)
@@ -25,7 +26,7 @@ func TestGraph_Plot(t *testing.T) {
 func TestGraph_Nearest(t *testing.T) {
 	t.Parallel()
 
-	g := NewGraph()
+	g := New()
 
 	t.Run("no data", func(t *testing.T) {
 		var values []string
@@ -71,7 +72,7 @@ func TestGraph_Nearest(t *testing.T) {
 func TestGraph_Frequency(t *testing.T) {
 	t.Parallel()
 
-	g := NewGraph()
+	g := New()
 
 	t.Run("nil value", func(t *testing.T) {
 		err := g.Frequency(nil)
