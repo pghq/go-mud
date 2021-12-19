@@ -83,7 +83,7 @@ func (g *Graph) view(key []byte, v interface{}, q internal.Query, fn func(q inte
 		var values []reflect.Value
 		for _, key := range keys {
 			item := reflect.New(reflect.TypeOf(v).Elem().Elem())
-			if err := tx.Get("", string(key), &item); err != nil {
+			if err := tx.Get("", string(key), item.Interface()); err != nil {
 				return tea.Error(err)
 			}
 			values = append(values, item.Elem())
