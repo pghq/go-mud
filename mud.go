@@ -60,7 +60,7 @@ func (g *Graph) Wait() {
 
 // view keys by algorithm
 func (g *Graph) view(key []byte, v interface{}, q internal.Query, fn func(q internal.Query) ([][]byte, error)) error {
-	return g.mapper.Do(context.Background(), func(tx db.Txn) error {
+	return g.mapper.Do(context.Background(), func(tx ark.Txn) error {
 		rv := reflect.ValueOf(v)
 		if rv.Kind() != reflect.Ptr || rv.IsNil() || !rv.IsValid() {
 			return tea.NewError("dst must be a pointer")

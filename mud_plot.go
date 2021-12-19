@@ -3,7 +3,7 @@ package mud
 import (
 	"context"
 
-	"github.com/pghq/go-ark/db"
+	"github.com/pghq/go-ark"
 	"github.com/pghq/go-tea"
 )
 
@@ -13,7 +13,7 @@ func (g *Graph) Plot(key []byte, value interface{}, point []float64, tags ...str
 		return tea.NewError("bad request")
 	}
 
-	return g.mapper.Do(context.Background(), func(tx db.Txn) error {
+	return g.mapper.Do(context.Background(), func(tx ark.Txn) error {
 		if err := tx.Insert("", string(key), value); err != nil {
 			return tea.Error(err)
 		}
