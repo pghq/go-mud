@@ -3,9 +3,9 @@ module github.com/pghq/go-mud
 go 1.17
 
 require (
-	github.com/pghq/go-ark v0.0.41
-	github.com/pghq/go-red v0.0.10
-	github.com/pghq/go-tea v0.0.33
+	github.com/pghq/go-ark v0.0.49
+	github.com/pghq/go-red v0.0.14
+	github.com/pghq/go-tea v0.0.37
 	github.com/sjwhitworth/golearn v0.0.0-20211014193759-a8b69c276cd8
 	github.com/stretchr/testify v1.7.0
 )
