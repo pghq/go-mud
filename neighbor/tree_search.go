@@ -14,7 +14,7 @@ import (
 // Search for nearest neighbors
 func (t *Tree) Search(q internal.Query) ([][]byte, error) {
 	if t.kd == nil {
-		return nil, tea.NewNoContent("not found")
+		return nil, tea.ErrNoContent("not found")
 	}
 
 	t.mutex.RLock()

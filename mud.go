@@ -18,7 +18,7 @@ import (
 	"time"
 
 	"github.com/pghq/go-ark"
-	"github.com/pghq/go-ark/db"
+	"github.com/pghq/go-ark/database"
 	"github.com/pghq/go-tea"
 
 	"github.com/pghq/go-mud/frequency"
@@ -35,13 +35,13 @@ const (
 type Graph struct {
 	neighbors   *neighbor.Tree
 	frequencies *frequency.Map
-	mapper      *ark.Mapper
+	db          *ark.Mapper
 }
 
 // New creates a new graph.
 func New(opts ...GraphOption) *Graph {
 	g := Graph{
-		mapper:      ark.New(),
+		db:          ark.New("memory://"),
 		neighbors:   neighbor.NewTree(),
 		frequencies: frequency.NewMap(),
 	}
@@ -60,46 +60,46 @@ func (g *Graph) Wait() {
 
 // view keys by algorithm
 func (g *Graph) view(key []byte, v interface{}, q internal.Query, fn func(q internal.Query) ([][]byte, error)) error {
-	return g.mapper.Do(context.Background(), func(tx ark.Txn) error {
+	return g.db.Do(context.Background(), func(tx ark.Txn) error {
 		rv := reflect.ValueOf(v)
 		if rv.Kind() != reflect.Ptr || rv.IsNil() || !rv.IsValid() {
-			return tea.NewError("dst must be a pointer")
+			return tea.Err("dst must be a pointer")
 		}
 
 		rv = rv.Elem()
 		if rv.Kind() != reflect.Slice {
-			return tea.NewError("dst must be a pointer to slice")
+			return tea.Err("dst must be a pointer to slice")
 		}
 
 		var keys [][]byte
 		if err := tx.Get("", string(key), &keys); err != nil {
 			keys, err = fn(q)
 			if err != nil {
-				return tea.Error(err)
+				return tea.Stack(err)
 			}
-			_ = tx.Insert("", string(key), keys, db.TTL(QueryCacheTTL))
+			_ = tx.InsertTTL("", string(key), keys, QueryCacheTTL)
 		}
 
 		var values []reflect.Value
 		for _, key := range keys {
 			item := reflect.New(reflect.TypeOf(v).Elem().Elem())
 			if err := tx.Get("", string(key), item.Interface()); err != nil {
-				return tea.Error(err)
+				return tea.Stack(err)
 			}
 			values = append(values, item.Elem())
 		}
 
 		rv.Set(reflect.Append(rv, values...))
 		return nil
-	}, db.BatchReadSize(2))
+	}, database.BatchReadSize(2))
 }
 
 // GraphOption to configure custom graph
 type GraphOption func(g *Graph)
 
-// Mapper sets a custom data mapper
-func Mapper(o *ark.Mapper) GraphOption {
+// Database sets a custom data mapper
+func Database(o *ark.Mapper) GraphOption {
 	return func(g *Graph) {
-		g.mapper = o
+		g.db = o
 	}
 }

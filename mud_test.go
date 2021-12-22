@@ -1,16 +1,23 @@
 package mud
 
 import (
+	"os"
 	"testing"
 
 	"github.com/pghq/go-ark"
+	"github.com/pghq/go-tea"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestMain(m *testing.M) {
+	tea.Testing()
+	os.Exit(m.Run())
+}
 
 func TestGraph_Plot(t *testing.T) {
 	t.Parallel()
 
-	g := New(Mapper(ark.New()))
+	g := New(Database(ark.New("memory://")))
 
 	t.Run("bad request", func(t *testing.T) {
 		err := g.Plot(nil, nil, nil)
