@@ -3,9 +3,9 @@ module github.com/pghq/go-mud
 go 1.17
 
 require (
-	github.com/pghq/go-ark v0.0.51
-	github.com/pghq/go-red v0.0.14
-	github.com/pghq/go-tea v0.0.37
+	github.com/pghq/go-ark v0.0.53
+	github.com/pghq/go-red v0.0.16
+	github.com/pghq/go-tea v0.0.39
 	github.com/sjwhitworth/golearn v0.0.0-20211014193759-a8b69c276cd8
 	github.com/stretchr/testify v1.7.0
 )
@@ -21,6 +21,8 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/getsentry/sentry-go v0.11.0 // indirect
+	github.com/go-logr/logr v1.2.1 // indirect
+	github.com/go-logr/stdr v1.2.0 // indirect
 	github.com/go-redis/redis/v8 v8.11.4 // indirect
 	github.com/go-redsync/redsync/v4 v4.4.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
@@ -41,7 +43,6 @@ require (
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
-	github.com/luna-duclos/instrumentedsql v1.1.3 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/pressly/goose/v3 v3.4.1 // indirect
@@ -49,6 +50,10 @@ require (
 	github.com/rs/zerolog v1.25.0 // indirect
 	github.com/teambition/rrule-go v1.7.2 // indirect
 	go.opencensus.io v0.22.5 // indirect
+	go.opentelemetry.io/otel v1.3.0 // indirect
+	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.3.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.3.0 // indirect
+	go.opentelemetry.io/otel/trace v1.3.0 // indirect
 	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f // indirect
 	golang.org/x/sys v0.0.0-20211007075335-d3039528d8ac // indirect
 	gonum.org/v1/gonum v0.8.1 // indirect

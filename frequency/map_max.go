@@ -14,7 +14,7 @@ func (m *Map) Max(q internal.Query) ([][]byte, error) {
 	defer m.mutex.RUnlock()
 
 	if len(m.list) == 0 {
-		return nil, tea.NewNoContent("not found")
+		return nil, tea.ErrNoContent("not found")
 	}
 
 	end := int(math.Min(float64(q.Limit), float64(len(m.list))))
@@ -34,7 +34,7 @@ func (m *Map) MaxTag(q internal.Query) ([][]byte, error) {
 
 	list, _ := m.tags[q.Tag]
 	if len(list) == 0 {
-		return nil, tea.NewNoContent("not found")
+		return nil, tea.ErrNoContent("not found")
 	}
 
 	end := int(math.Min(float64(q.Limit), float64(len(list))))
